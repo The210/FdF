@@ -6,7 +6,7 @@
 /*   By: dhorvill <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/28 18:59:48 by dhorvill          #+#    #+#             */
-/*   Updated: 2018/01/08 18:15:38 by dhorvill         ###   ########.fr       */
+/*   Updated: 2018/01/22 17:07:55 by dhorvill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void ft_draw_line(float x1, float y1, float x2, float y2, void *mlx, void *win)
 			y1 += n;
 		}
 	}
-	if (coeff > 1)
+	if (coeff <= 1)
 	{
 		if (m == 1 && n == 1)
 		{
