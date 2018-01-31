@@ -6,7 +6,7 @@
 /*   By: dhorvill <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/25 15:25:58 by dhorvill          #+#    #+#             */
-/*   Updated: 2018/01/31 18:12:02 by dhorvill         ###   ########.fr       */
+/*   Updated: 2018/01/31 21:23:47 by dhorvill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,20 +17,61 @@
 #include "fdf.h"
 #include <fcntl.h>
 
+void	clearstuff(void *mlx, void *win)
+{
+	int x;
+	int y;
+
+	x = 0;
+	while(x < 1700)
+	{
+		y = 0;
+		while(y < 1400)
+		{
+			mlx_pixel_put(mlx, win, x, y, 0);
+			y++;
+		}
+		x++;
+	}
+}
+
 int	exitt(int keycode, t_misc *s)
 {
 	printf("%i\n", keycode);
 	if (keycode == 53)
 		exit(0);
-	if (keycode == 126)
+	if (keycode == 2)
 	{
 		s->d += 1;
 		close(s->fd);
-		printf("this is s.n: %f\n this is s.e %f\n", s->n, s->e);
 		s->fd = open(s->str, O_RDONLY);
-		connect_dots(s->fd, s->d, s->n, s->e, s->mlx, s->win);
+		clearstuff(s->mlx, s->win);
+		connect_dots(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
 	}
-	printf("%i\n", s->d);
+	if (keycode == 126)
+	{
+		s->p += 1;
+		close(s->fd);
+		s->fd = open(s->str, O_RDONLY);
+		clearstuff(s->mlx, s->win);
+		connect_dots(s->p, s->fd, s->d,s->n, s->e, s->mlx, s->win);
+	}
+	if (keycode == 125)
+	{
+		s->p -= 1;
+		close(s->fd);
+		s->fd = open(s->str, O_RDONLY);
+		clearstuff(s->mlx, s->win);
+		connect_dots(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
+	}
+	if (keycode == 124)
+	{
+		s->n += 50;
+		close(s->fd);
+		s->fd = open(s->str, O_RDONLY);
+		clearstuff(s->mlx, s->win);
+		connect_dots(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
+	}
 	return (0);
 }
 
