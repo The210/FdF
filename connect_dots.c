@@ -6,7 +6,7 @@
 /*   By: dhorvill <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/08 14:30:09 by dhorvill          #+#    #+#             */
-/*   Updated: 2018/01/31 21:23:48 by dhorvill         ###   ########.fr       */
+/*   Updated: 2018/01/31 22:28:44 by dhorvill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ char	*ft_exchange(char *buf, char a, char *str)
 	return (strr);
 }
 
-static int	nbw(char *s, char c)
+int	nbw(char *s, char c)
 {
 	int i;
 	int sym;
@@ -81,8 +81,7 @@ t_misc determine_dist(int fd, t_misc *s)
 	s->b = nbw(pdt[s->a], ' ');
 	while (pdt[s->a])
 		s->a++;
-	s->d = 10;
-//	s->d = (round(10000 / (s->b * s->a)) + 5);
+	s->d = (round(10000 / (s->b * s->a)) + 5);
 	return (*s);
 }
 
