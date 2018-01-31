@@ -6,7 +6,7 @@
 /*   By: dhorvill <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/25 15:25:58 by dhorvill          #+#    #+#             */
-/*   Updated: 2018/01/31 22:24:12 by dhorvill         ###   ########.fr       */
+/*   Updated: 2018/02/01 00:07:43 by dhorvill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include "fdf.h"
 #include <fcntl.h>
 
-int	clearstuff(int new_num, int fd, int dist, float x, float y, void *mlx, void *win)
+int	clearstuff(int new_num, int fd, int distx, int disty, float x, float y, void *mlx, void *win)
 {
 	char buf[15000];
 	char **pdt;
@@ -61,17 +61,17 @@ int	clearstuff(int new_num, int fd, int dist, float x, float y, void *mlx, void 
 			while (pdt[i][j + 2] && pdt[i][j] == ' ')
 				j++;
 			next_nbr = ft_getnbr(pdt[i], j) * new_num;
-			calcul = y - (nbr * (round(dist / 3)));
-			calcul2 = round(x + dist);
-			calcul3 = round(y + dist - (next_nbr * (round(dist / 3))));
+			calcul = y - (nbr * (round(disty / 3)));
+			calcul2 = round(x + distx);
+			calcul3 = round(y + disty - (next_nbr * (round(disty / 3))));
 			ft_draw_line3(x, calcul,
 					calcul2, calcul3, mlx, win);
-			x = round(x + (dist));
-			y = round(y + (dist));
+			x = round(x + (distx));
+			y = round(y + (disty));
 		}
 		i++;
-		x = init_x - (dist * i);
-		y = init_y + (dist * i);
+		x = init_x - (distx * i);
+		y = init_y + (disty * i);
 	}
 	x = init_x;
 	y = init_y;
@@ -92,13 +92,13 @@ int	clearstuff(int new_num, int fd, int dist, float x, float y, void *mlx, void 
 			while (i % nbpl != counter)
 				i++;
 			next_nbr = ft_getnbr(str[i], 0) * new_num;
-			ft_draw_line3(x, round(y - (nbr * round(dist / 3))), round(x - dist), round(y + dist - (next_nbr * (round (dist / 3)))), mlx, win);
-			x = round (x - (dist));
-			y = round (y + (dist));
+			ft_draw_line3(x, round(y - (nbr * round(disty / 3))), round(x - distx), round(y + disty - (next_nbr * (round (disty / 3)))), mlx, win);
+			x = round (x - (distx));
+			y = round (y + (disty));
 		}
 		counter++;
-		x = init_x + (dist * counter);
-		y = init_y + (dist * counter);
+		x = init_x + (distx * counter);
+		y = init_y + (disty * counter);
 	}
 	x = init_x;
 	y = init_y;
@@ -114,81 +114,126 @@ int	exitt(int keycode, t_misc *s)
 	{
 		close(s->fd);
 		s->fd = open(s->str, O_RDONLY);
-		clearstuff(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
-		s->d += 1;
+		clearstuff(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
+		s->distx += 1;
+		s->disty += 1;
 		close(s->fd);
 		s->fd = open(s->str, O_RDONLY);
-		connect_dots(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
+		connect_dots(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
 	}
 	if (keycode == 126)
 	{
 		close(s->fd);
 		s->fd = open(s->str, O_RDONLY);
-		clearstuff(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
+		clearstuff(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
 		s->p += 1;
 		close(s->fd);
 		s->fd = open(s->str, O_RDONLY);
-		connect_dots(s->p, s->fd, s->d,s->n, s->e, s->mlx, s->win);
+		connect_dots(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
 	}
 	if (keycode == 125)
 	{
 		close(s->fd);
 		s->fd = open(s->str, O_RDONLY);
-		clearstuff(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
+		clearstuff(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
 		s->p -= 1;
 		close(s->fd);
 		s->fd = open(s->str, O_RDONLY);
-		connect_dots(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
+		connect_dots(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
 	}
 	if (keycode == 124)
 	{
 		close(s->fd);
 		s->fd = open(s->str, O_RDONLY);
-		clearstuff(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
+		clearstuff(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
 		s->n += 50;
 		close(s->fd);
 		s->fd = open(s->str, O_RDONLY);
-		connect_dots(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
+		connect_dots(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
 	}
 	if (keycode == 123)
 	{
 		close(s->fd);
 		s->fd= open(s->str, O_RDONLY);
-		clearstuff(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);	
+		clearstuff(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);	
 		s->n -= 50;
 		close(s->fd);
 		s->fd = open(s->str, O_RDONLY);
-		connect_dots(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
+		connect_dots(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
 	}
 	if (keycode == 7)
 	{
 		close(s->fd);
 		s->fd = open(s->str, O_RDONLY);
-		clearstuff(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
-		s->d -= 1;
+		clearstuff(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
+		s->disty -= 1;
+		s->distx -= 1;
 		close(s->fd);
 		s->fd = open(s->str, O_RDONLY);
-		connect_dots(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
+		connect_dots(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
 	}
 	if (keycode == 13)
 	{
 		close(s->fd);
 		s->fd = open(s->str, O_RDONLY);
-		clearstuff(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
+		clearstuff(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
 		s->e -= 50;
 		close(s->fd);
 		s->fd = open(s->str, O_RDONLY);
-		connect_dots(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
+		connect_dots(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
 	}
 	if (keycode == 1)
 	{
 		close(s->fd);
 		s->fd = open(s->str, O_RDONLY);
-		clearstuff(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
+		clearstuff(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
 		s->e += 50;
 		close(s->fd);
 		s->fd = open(s->str, O_RDONLY);
-		connect_dots(s->p, s->fd, s->d, s->n, s->e, s->mlx, s->win);
+		connect_dots(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
+	}
+	if (keycode == 88 && s->distx > -s->d)
+	{
+		close(s->fd);
+		s->fd = open(s->str, O_RDONLY);
+		clearstuff(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
+		s->distx -= 5;
+		close(s->fd);
+		s->fd = open(s->str, O_RDONLY);
+		connect_dots(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
+	}
+
+	if (keycode == 86 && s->distx < s->d)
+	{
+		close(s->fd);
+		s->fd = open(s->str, O_RDONLY);
+		clearstuff(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
+		s->distx += 5;
+		close(s->fd);
+		s->fd = open(s->str, O_RDONLY);
+		connect_dots(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
+	}
+	if (keycode == 91 && s->disty > -s->d)
+	{
+		close(s->fd);
+		s->fd = open(s->str, O_RDONLY);
+		clearstuff(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
+		s->disty -= 5;
+		s->e += 50;
+		close(s->fd);
+		s->fd = open(s->str, O_RDONLY);
+		connect_dots(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
+	}
+	if (keycode == 84 && s->disty < s->d)
+	{
+		close(s->fd);
+		s->fd = open(s->str, O_RDONLY);
+		clearstuff(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
+		s->disty += 5;
+		s->e -= 50;
+		close(s->fd);
+		s->fd = open(s->str, O_RDONLY);
+		connect_dots(s->p, s->fd, s->distx, s->disty, s->n, s->e, s->mlx, s->win);
 	}
 	return (0);
 }

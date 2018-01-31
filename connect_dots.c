@@ -6,7 +6,7 @@
 /*   By: dhorvill <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/08 14:30:09 by dhorvill          #+#    #+#             */
-/*   Updated: 2018/01/31 22:28:44 by dhorvill         ###   ########.fr       */
+/*   Updated: 2018/01/31 23:31:23 by dhorvill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int	ft_getnbr(char *str, int i)
 	return (nbr);
 }
 
-int connect_dots(int new_num, int fd, int dist, float x, float y, void *mlx, void *win)
+int connect_dots(int new_num, int fd, int distx, int disty, float x, float y, void *mlx, void *win)
 {
 	char buf[15000];
 	char **pdt;
@@ -145,17 +145,17 @@ int connect_dots(int new_num, int fd, int dist, float x, float y, void *mlx, voi
 			while (pdt[i][j + 2] && pdt[i][j] == ' ')
 				j++;
 			next_nbr = ft_getnbr(pdt[i], j) * new_num;
-			calcul = y - (nbr * (round(dist / 3)));
-			calcul2 = round(x + dist);
-			calcul3 = round(y + dist - (next_nbr * (round(dist / 3))));
+			calcul = y - (nbr * (round(disty / 3)));
+			calcul2 = round(x + distx);
+			calcul3 = round(y + disty - (next_nbr * (round(disty / 3))));
 			ft_draw_line2(x, calcul,
 					calcul2, calcul3, mlx, win);
-			x = round(x + (dist));
-			y = round(y + (dist));
+			x = round(x + (distx));
+			y = round(y + (disty));
 		}
 		i++;
-		x = init_x - (dist * i);
-		y = init_y + (dist * i);
+		x = init_x - (distx * i);
+		y = init_y + (disty * i);
 	}
 	x = init_x;
 	y = init_y;
@@ -176,13 +176,13 @@ int connect_dots(int new_num, int fd, int dist, float x, float y, void *mlx, voi
 			while (i % nbpl != counter)
 				i++;
 			next_nbr = ft_getnbr(str[i], 0) * new_num;
-			ft_draw_line2(x, round(y - (nbr * round(dist / 3))), round(x - dist), round(y + dist - (next_nbr * (round (dist / 3)))), mlx, win);
-			x = round (x - (dist));
-			y = round (y + (dist));
+			ft_draw_line2(x, round(y - (nbr * round(disty / 3))), round(x - distx), round(y + disty - (next_nbr * (round (disty / 3)))), mlx, win);
+			x = round (x - (distx));
+			y = round (y + (disty));
 		}
 		counter++;
-		x = init_x + (dist * counter);
-		y = init_y + (dist * counter);
+		x = init_x + (distx * counter);
+		y = init_y + (disty * counter);
 	}
 	x = init_x;
 	y = init_y;
@@ -212,12 +212,14 @@ int	main(int argc, char **argv)
 	fd = open(argv[1], O_RDONLY);
 	if (s.d == 0)
 		s = determine_dist(fd, &s);
+	s.distx = s.d;
+	s.disty = s.d;
 	close(fd);
 	fd = open(argv[1], O_RDONLY);
 	s = find_initial_coord(&s);
 	printf("%f, %f\n", s.n, s.e);
 	s.fd = fd;
-	connect_dots(s.p, fd, s.d, s.n, s.e, s.mlx, s.win);
+	connect_dots(s.p, fd, s.distx, s.disty, s.n, s.e, s.mlx, s.win);
 	mlx_key_hook(s.win, exitt, (void *)&s);
 	mlx_loop(s.mlx);
 	return (0);
