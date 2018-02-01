@@ -6,7 +6,7 @@
 /*   By: dhorvill <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/08 14:30:09 by dhorvill          #+#    #+#             */
-/*   Updated: 2018/01/31 23:31:23 by dhorvill         ###   ########.fr       */
+/*   Updated: 2018/02/01 21:10:15 by dhorvill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int	ft_getnbr(char *str, int i)
 	return (nbr);
 }
 
-int connect_dots(int new_num, int fd, int distx, int disty, float x, float y, void *mlx, void *win)
+int connect_dots(int yrot, int xrot, int new_num, int fd, int distx, int disty, float x, float y, void *mlx, void *win)
 {
 	char buf[15000];
 	char **pdt;
@@ -139,16 +139,16 @@ int connect_dots(int new_num, int fd, int distx, int disty, float x, float y, vo
 		{
 			while(pdt[i][j + 2] && pdt[i][j] == ' ')
 				j++;
-			nbr = ft_getnbr(pdt[i], j) * new_num;
+			nbr = ft_getnbr(pdt[i], j) * new_num / 5;
 			while (pdt[i][j + 2] && pdt[i][j] != ' ')
 				j++;
 			while (pdt[i][j + 2] && pdt[i][j] == ' ')
 				j++;
-			next_nbr = ft_getnbr(pdt[i], j) * new_num;
-			calcul = y - (nbr * (round(disty / 3)));
-			calcul2 = round(x + distx);
-			calcul3 = round(y + disty - (next_nbr * (round(disty / 3))));
-			ft_draw_line2(x, calcul,
+			next_nbr = ft_getnbr(pdt[i], j) * new_num / 5;
+			calcul = y - (nbr * round(disty / 3)) - (yrot * nbr);
+			calcul2 = round(x + distx - (xrot * next_nbr));
+			calcul3 = round(y - (yrot * next_nbr) + disty - (next_nbr * (round(disty / 3))));
+			ft_draw_line2(x - (xrot * nbr), calcul,
 					calcul2, calcul3, mlx, win);
 			x = round(x + (distx));
 			y = round(y + (disty));
@@ -171,12 +171,12 @@ int connect_dots(int new_num, int fd, int distx, int disty, float x, float y, vo
 		{
 			while (i % nbpl != counter)
 				i++;
-			nbr = ft_getnbr(str[i], 0) * new_num;
+			nbr = ft_getnbr(str[i], 0) * new_num / 5;
 			i++;
 			while (i % nbpl != counter)
 				i++;
-			next_nbr = ft_getnbr(str[i], 0) * new_num;
-			ft_draw_line2(x, round(y - (nbr * round(disty / 3))), round(x - distx), round(y + disty - (next_nbr * (round (disty / 3)))), mlx, win);
+			next_nbr = ft_getnbr(str[i], 0) * new_num / 5;
+			ft_draw_line2(x - (xrot * nbr), y - (nbr * round(disty / 3)) - (yrot * nbr), round(x - distx - (xrot * next_nbr)), round(y - (yrot * next_nbr) + disty - (next_nbr * (round (disty / 3)))), mlx, win);
 			x = round (x - (distx));
 			y = round (y + (disty));
 		}
@@ -205,6 +205,10 @@ int	main(int argc, char **argv)
 	t_misc s;
 
 	s.p = 1;
+	s.roti = 0;
+	s.roto = 0;
+	s.xrot = 0;
+	s.yrot = 0;
 	s.str = argv[1];
 	s.d = 0;
 	s.mlx = mlx_init();
@@ -219,7 +223,7 @@ int	main(int argc, char **argv)
 	s = find_initial_coord(&s);
 	printf("%f, %f\n", s.n, s.e);
 	s.fd = fd;
-	connect_dots(s.p, fd, s.distx, s.disty, s.n, s.e, s.mlx, s.win);
+	connect_dots(s.yrot, s.xrot, s.p, fd, s.distx, s.disty, s.n, s.e, s.mlx, s.win);
 	mlx_key_hook(s.win, exitt, (void *)&s);
 	mlx_loop(s.mlx);
 	return (0);
